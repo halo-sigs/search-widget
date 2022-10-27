@@ -96,7 +96,6 @@ const onVisibleChange = (visible: boolean) => {
   <VModal
     :visible="visible"
     :body-class="['!p-0']"
-    :mount-to-body="true"
     :width="650"
     :centered="false"
     @update:visible="onVisibleChange"

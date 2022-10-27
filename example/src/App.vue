@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import HelloWorld from "./components/HelloWorld.vue";
+import TheWelcome from "./components/TheWelcome.vue";
+import { SearchWidget } from "@halo-dev/search-widget";
+import "@halo-dev/search-widget/dist/style.css";
+import { onMounted, ref } from "vue";
+
+const visible = ref(false);
+onMounted(() => {
+  visible.value = true;
+});
 </script>
 
 <template>
+  <SearchWidget v-model:visible="visible" />
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    <img
+      alt="Vue logo"
+      class="logo"
+      src="./assets/logo.svg"
+      width="125"
+      height="125"
+    />
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
