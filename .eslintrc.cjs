@@ -19,5 +19,6 @@ module.exports = {
   rules: {
     "vue/multi-word-component-names": 0,
     "@typescript-eslint/ban-ts-comment": 0,
+    "vue/no-v-html": 0,
   },
 };

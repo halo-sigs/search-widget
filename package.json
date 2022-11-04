@@ -11,7 +11,7 @@
   "jsdelivr": "./dist/halo-search-widget.iife.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest --environment jsdom --root src/",
@@ -22,12 +22,15 @@
   "dependencies": {
     "@halo-dev/components": "0.0.0-alpha.5",
     "@vueuse/core": "^9.4.0",
+    "axios": "^1.1.3",
+    "lodash.debounce": "^4.0.8",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/jsdom": "^20.0.0",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/node": "16",
     "@vitejs/plugin-vue": "^2.3.4",
     "@vue/compiler-sfc": "^3.2.41",

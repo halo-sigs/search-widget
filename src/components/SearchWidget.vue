@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { VModal, VEntity, VEntityField } from "@halo-dev/components";
 import { ref, watch } from "vue";
+import debounce from "lodash.debounce";
+import axios from "axios";
+import type { Result } from "@/types/model";
 
 const props = withDefaults(
   defineProps<{
@@ -15,11 +18,27 @@ const emit = defineEmits<{
   (e: "update:visible", visible: boolean): void;
 }>();
 
-const globalSearchInput = ref<HTMLInputElement | null>(null);
+const searchInput = ref<HTMLInputElement | null>(null);
 const keyword = ref("");
 
 const selectedIndex = ref(0);
-const searchResults = ref([]);
+const searchResults = ref<Result>({
+  hits: [],
+  keyword: "",
+  total: 0,
+  limit: 0,
+  processingTimeMills: 0,
+});
+
+const handleSearch = debounce(() => {
+  axios
+    .get<Result>(
+      `http://localhost:8090/apis/api.halo.run/v1alpha1/posts?keyword=${keyword.value}`
+    )
+    .then((response) => {
+      searchResults.value = response.data;
+    });
+}, 300);
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (!props.visible) {
@@ -35,15 +54,17 @@ const handleKeydown = (e: KeyboardEvent) => {
 
   if (key === "ArrowDown" || (key === "j" && ctrlKey)) {
     selectedIndex.value = Math.min(
-      searchResults.value.length - 1,
+      searchResults.value.hits.length - 1,
       selectedIndex.value + 1
     );
     e.preventDefault();
   }
 
   if (key === "Enter") {
-    const searchResult = searchResults.value[selectedIndex.value];
-    console.log(searchResult);
+    const searchResult = searchResults.value.hits[selectedIndex.value];
+    if (searchResult) {
+      window.location.href = searchResult.permalink;
+    }
   }
 
   if (key === "Escape") {
@@ -75,7 +96,7 @@ watch(
   (visible) => {
     if (visible) {
       setTimeout(() => {
-        globalSearchInput.value?.focus();
+        searchInput.value?.focus();
       }, 100);
 
       document.addEventListener("keydown", handleKeydown);
@@ -102,43 +123,50 @@ const onVisibleChange = (visible: boolean) => {
   >
     <div id="search-input" class="border-b border-gray-100 px-4 py-2.5">
       <input
-        ref="globalSearchInput"
+        ref="searchInput"
         v-model="keyword"
         placeholder="输入关键词以搜索"
         class="w-full py-1 text-base outline-none"
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
+        @input="handleSearch"
       />
     </div>
     <div class="px-2 py-2.5">
       <div
-        v-if="!searchResults.length"
+        v-if="!searchResults.hits.length"
         class="flex items-center justify-center text-sm text-gray-500"
       >
         <span>没有搜索结果</span>
       </div>
       <ul
-        v-if="searchResults.length > 0"
-        class="box-border flex h-full w-full flex-col gap-0.5"
+        v-else
+        class="box-border flex h-full w-full flex-col gap-1"
         role="list"
       >
         <li
-          v-for="(item, itemIndex) in searchResults"
+          v-for="(item, itemIndex) in searchResults.hits"
           :id="`search-item-${itemIndex}`"
           :key="itemIndex"
         >
-          <VEntity
-            class="rounded-md px-2 py-2.5 hover:bg-gray-100"
-            :class="{ 'bg-gray-100': selectedIndex === itemIndex }"
+          <div
+            class="rounded-md px-2 py-2.5 bg-gray-50 hover:bg-gray-100 flex flex-col gap-1"
+            :class="{
+              '!bg-gray-100': selectedIndex === itemIndex,
+            }"
           >
-            <template #start>
-              <VEntityField :title="item"></VEntityField>
-            </template>
-            <template #end>
-              <VEntityField :description="item"></VEntityField>
-            </template>
-          </VEntity>
+            <div
+              v-if="item.title"
+              class="text-sm font-semibold text-gray-900"
+              v-html="item.title"
+            ></div>
+            <div
+              v-if="item.excerpt"
+              class="text-xs text-gray-600"
+              v-html="item.excerpt"
+            ></div>
+          </div>
         </li>
       </ul>
     </div>
