@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VModal, VEntity, VEntityField } from "@halo-dev/components";
+import { VModal } from "@halo-dev/components";
 import { ref, watch } from "vue";
 import debounce from "lodash.debounce";
 import axios from "axios";
@@ -8,9 +8,11 @@ import type { Result } from "@/types/model";
 const props = withDefaults(
   defineProps<{
     visible: boolean;
+    baseUrl?: string;
   }>(),
   {
     visible: false,
+    baseUrl: undefined,
   }
 );
 
@@ -33,7 +35,9 @@ const searchResults = ref<Result>({
 const handleSearch = debounce(() => {
   axios
     .get<Result>(
-      `http://localhost:8090/apis/api.halo.run/v1alpha1/posts?keyword=${keyword.value}`
+      `${
+        props.baseUrl
+      }/apis/api.halo.run/v1alpha1/indices/post?keyword=${keyword.value.trim()}&highlightPreTag=<mark>&highlightPostTag=</mark>`
     )
     .then((response) => {
       searchResults.value = response.data;
@@ -162,9 +166,9 @@ const onVisibleChange = (visible: boolean) => {
               v-html="item.title"
             ></div>
             <div
-              v-if="item.excerpt"
+              v-if="item.content"
               class="text-xs text-gray-600"
-              v-html="item.excerpt"
+              v-html="item.content"
             ></div>
           </div>
         </li>
