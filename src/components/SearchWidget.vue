@@ -12,7 +12,7 @@ const props = withDefaults(
   }>(),
   {
     visible: false,
-    baseUrl: undefined,
+    baseUrl: "",
   }
 );
 
