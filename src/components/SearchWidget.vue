@@ -3,7 +3,7 @@ import { VModal } from "@halo-dev/components";
 import { ref, watch } from "vue";
 import debounce from "lodash.debounce";
 import axios from "axios";
-import type { Result } from "@/types/model";
+import type { Result, Hit } from "@/types/model";
 
 const props = withDefaults(
   defineProps<{
@@ -67,7 +67,7 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (key === "Enter") {
     const searchResult = searchResults.value.hits[selectedIndex.value];
     if (searchResult) {
-      window.location.href = searchResult.permalink;
+      handleOpenLink(searchResult);
     }
   }
 
@@ -75,6 +75,10 @@ const handleKeydown = (e: KeyboardEvent) => {
     onVisibleChange(false);
     e.preventDefault();
   }
+};
+
+const handleOpenLink = (hit: Hit) => {
+  window.location.href = hit.permalink;
 };
 
 watch(
@@ -153,6 +157,8 @@ const onVisibleChange = (visible: boolean) => {
           v-for="(item, itemIndex) in searchResults.hits"
           :id="`search-item-${itemIndex}`"
           :key="itemIndex"
+          class="cursor-pointer"
+          @click="handleOpenLink(item)"
         >
           <div
             class="rounded-md px-2 py-2.5 bg-gray-50 hover:bg-gray-100 flex flex-col gap-1"

@@ -1,7 +1,6 @@
 export interface Hit {
   name: string;
   title: string;
-  excerpt: string;
   content: string;
   publishTimestamp: string;
   permalink: string;

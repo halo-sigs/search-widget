@@ -10,5 +10,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <SearchWidget v-model:visible="visible" />
+  <SearchWidget v-model:visible="visible" base-url="http://localhost:8090" />
 </template>
