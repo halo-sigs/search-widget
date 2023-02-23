@@ -4,4 +4,4 @@
 
 > **Warning**
 >
-> 当前仓库已归档，后续将托管在 [halo-sigs/plugin-comment-widget](https://github.com/halo-sigs/plugin-comment-widget/tree/main/packages/comment-widget) 维护。
+> 当前仓库已归档，后续将托管在 [halo-sigs/plugin-search-widget](https://github.com/halo-sigs/plugin-search-widget/tree/main/packages/search-widget) 维护。
